@@ -1,0 +1,141 @@
+
+---
+
+## 🧠 THE CORE IDEA
+
+Given input:
+
+```
+"   Hello    world this   is 	Larry "
+```
+
+We want output:
+
+```
+world this is Larry Hello
+```
+
+That is:
+
+* Identify and **cut out** the first word: `Hello`
+* Skip all extra spaces/tabs/etc
+* Print the **rest of the words**
+* Then **print the first word at the end**
+
+---
+
+## 📜 STEP-BY-STEP LOGIC
+
+### 1. **Skip leading whitespace**
+
+```c
+while(str[i] && (str[i] == ' ' || (str[i] >= '\t' && str[i] <= '\r')))
+    i++;
+```
+
+✔️ Moves `i` to the first non-whitespace character → start of the first word
+
+---
+
+### 2. **Record the start and end of the first word**
+
+```c
+int start = i;
+while (str[i] && !(str[i] == ' ' || (str[i] >= '\t' && str[i] <= '\r')))
+    i++;
+int end = i;
+```
+
+✔️ Now we’ve recorded the **first word's range** from `start` to `end` (excluding `end`)
+
+> So now we “save” the first word, but don’t print it yet.
+
+---
+
+### 3. **Skip whitespace after the first word**
+
+```c
+while (str[i] == ' ' || (str[i] >= '\t' && str[i] <= '\r'))
+    i++;
+```
+
+✔️ Get ready to scan the rest of the words
+
+---
+
+### 4. **Print remaining words (excluding the first)**
+
+```c
+int word_started = 0;
+while (str[i])
+{
+    while (str[i] == ' ' || (str[i] >= '\t' && str[i] <= '\r'))
+    {
+        i++;
+        if (word_started)
+            write(1, " ", 1);  // Write space only if a word was just written
+        word_started = 0;
+    }
+    if (str[i])
+    {
+        write(1, &str[i], 1);
+        word_started = 1;
+        i++;
+    }
+}
+```
+
+💡 This is a bit confusing at first, but it’s **clever**:
+
+* It skips over whitespace
+* Only prints a space *after* writing a word
+* Prevents **double spaces** and **leading spaces**
+
+> ⚠️ That `word_started` flag is critical. Without it, you’d get extra spaces at the start or between words.
+
+---
+
+### 5. **Print the first word at the end, conditionally**
+
+```c
+if (word_started)
+    write(1, " ", 1);
+```
+
+✔️ Only print a space before the first word **if we printed something else earlier**
+
+Then:
+
+```c
+while (start < end)
+{
+    write(1, &str[start], 1);
+    start++;
+}
+```
+
+✔️ Finally print the saved first word
+
+---
+
+### 6. **Finish with a newline**
+
+```c
+write(1, "\n", 1);
+```
+
+---
+
+## ⚙️ WHY DOES IT WORK?
+
+Because it **treats the first word as a special case**, delays printing it, and processes the rest of the string in a way that:
+
+* Removes redundant whitespace
+* Avoids leading/trailing/multiple spaces
+* Preserves word order (after the first)
+
+It’s low-level and clunky, but **it works** because:
+
+1. `start` and `end` store the first word
+2. Everything after `end` is processed and printed
+3. First word is re-attached at the end
