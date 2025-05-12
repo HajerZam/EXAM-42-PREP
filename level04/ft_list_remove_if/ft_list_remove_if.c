@@ -11,49 +11,36 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include "ft_list.h"
 
-void	ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)())
+void ft_list_remove_if(t_list **begin_list, void *data_ref, int (*cmp)())
 {
-	t_list *current;
-	t_list *prev;
+    t_list *tmp;
+    
+    // Step 1: Remove matching nodes at the head
+    while (*begin_list && cmp((*begin_list)->data, data_ref) == 0)
+    {
+        tmp = *begin_list;
+        *begin_list = (*begin_list)->next;
+        free(tmp);
+    }
 
-	current = *begin_list;
-	prev = NULL;
-	while (*begin_list)
-	{
-		if (cmp(current->data, data_ref) == 0)
-		{
-			if (previous)
-			{
-				prev->next = current->next;
-			}
-			else
-			{
-				*begin_list = current;
-			}
-			free(current);
-			current = prev ? prev->next : *begin_list;
-		}
-		else
-		{
-			prev = current;
-			current = current->next;
-		}
-	}
+    // Step 2: Traverse the list and remove matching nodes
+    t_list *current = *begin_list;
+    while (current && current->next)
+    {
+        if (cmp(current->next->data, data_ref) == 0)
+        {
+            tmp = current->next;
+            current->next = current->next->next;
+            free(tmp);
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
 }
-
-// Explanation:
-// t_list *current: Points to the current node in the list.
-// t_list *previous: Tracks the previous node to correctly update the list when we remove a node.
-
-// Traversal: The list is traversed using a while (current) loop.
-
-// If cmp(current->data, data_ref) == 0 (i.e., data is equal to data_ref), the current node is removed.
-// If the node is not the first node, we update the previous->next pointer to skip over the current node.
-
-// If the node is the first node (previous == NULL), we update the head of the list (*begin_list).
-// Memory management: After the node is removed, free(current) is called to free the memory of the current node.
-// Advancing the list: If the node was removed, we move to the next node (current = previous ? previous->next : *begin_list), otherwise, we just move to the next node in the list.
 
 //Edge Cases:
 //  The list might be empty (*begin_list == NULL).
