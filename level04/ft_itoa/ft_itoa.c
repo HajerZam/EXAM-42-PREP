@@ -12,41 +12,40 @@
 
 #include <stdlib.h>
 
-int	count_digit(int nb)
+int	count_digits(int nb)
 {
-	int i = 0;
+	int count = 0;
 
-	if (nb == 0)
-		return(0);
-	if (nb < 0)
-		i++;
+	if (nb <= 0)
+		count++;
 	while (nb != 0)
 	{
 		nb /= 10;
-		i++;
+		count++;
 	}
-	return (i);
+	return(count);
 }
-
-
 
 char	*ft_itoa(int nbr)
 {
-	char	*str;
-	int	len;
-	long	num;
-
-	num = n;
-	len = count_digit(n);
-	str = (char *)malloc(sizeof(char) * (len + 1));
-	if (!str)
-		return (NULL);
-	if (num == 0)
-		str[0] = '0';
-	while (num > 0)
+	int len = count_digits(nbr);
+	long nb = nbr;
+	char *res = (char *)malloc(sizeof(char) * (len + 1));
+	if (!res)
+		return NULL;
+	res[len] = '\0';
+	if (nb == 0)
+		res[0] = '0';
+	if (nb < 0)
 	{
-		str[--len] = (num % 10) + '0';
-		num /= 10;
+		res[0] ='-';
+		nb = -nb;
 	}
-	return (str);
+	while (nb > 0)
+	{
+		res[--len] = (nb % 10) + '0';
+		nb /= 10;
+	}
+	return (res);
 }
+
