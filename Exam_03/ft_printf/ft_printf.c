@@ -11,21 +11,26 @@
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include <unistd.h>
+#include <stdarg.h>
 
 int	ft_putchar(char c)
 {
-	return (write(1, &c, 1));
+	write(1, &c, 1);
+	return(1);
 }
 
-int	ft_putstr(char *str)
+int	ft_putstr(char	*str)
 {
+	int count = 0;
 	int i = 0;
 	if (!str)
-		return (ft_putstr("(null)"));
+		return (ft_putstr("(null)"))
 	while (str[i])
-		ft_putchar(str[i]);
-	return (i);
+	{
+		count += ft_putchar(str[i]);
+		i++;
+	}
+	return (count);
 }
 
 int	ft_putnbr(int nb)
@@ -35,29 +40,29 @@ int	ft_putnbr(int nb)
 	if (num < 0)
 	{
 		count += ft_putchar('-');
-		num = - num;
+		num = -num;
 	}
 	if (num >= 10)
-		count += ft_putnbr(num / 10);
-	count += ft_putchar(nb % 10 + '0');
+		ft_putnbr(num / 10);
+	count += ft_putchar((nb % 10) + '0');
 	return (count);
 }
 
-int	ft_puthex(unsigned int n)
+int	ft_puthex(unsigned int nb)
 {
-	char *base = "0123456789abcdef";
 	int count = 0;
-	if (n >= 16)
-		count += ft_puthex(n / 16);
-	count += putchar(base[n % 16]);
-	return (count);
+	char *base = "0123456789abcdef";
+        if (nb >= 16)
+                ft_putnbr(nb / 16);
+        count += ft_putchar(base[nb % 16]);
+        return (count);
 }
 
 int	ft_printf(const char *format, ... )
 {
 	va_list args;
-	int i = 0;
 	int count = 0;
+	int i = 0;
 
 	va_start(args, format);
 	while (format[i])
@@ -70,14 +75,15 @@ int	ft_printf(const char *format, ... )
 			else if (format[i] == 'd')
 				count += ft_putnbr(va_arg(args, int));
 			else if (format[i] == 'x')
-				count += ft_putnbr(va_arg(args, unsigned int));
+				count += ft_puthex(va_arg(args, unsigned int));
 			else
 				count += ft_putchar(format[i]);
 		}
 		else
-			count += ft_putchar(format[i]);
+			ft_putchar(format[i]);
 		i++;
 	}
 	va_end(args);
 	return (count);
+
 }
