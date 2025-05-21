@@ -24,7 +24,7 @@ int	ft_putstr(char	*str)
 	int count = 0;
 	int i = 0;
 	if (!str)
-		return (ft_putstr("(null)"))
+		return (ft_putstr("(null)"));
 	while (str[i])
 	{
 		count += ft_putchar(str[i]);
@@ -43,7 +43,7 @@ int	ft_putnbr(int nb)
 		num = -num;
 	}
 	if (num >= 10)
-		ft_putnbr(num / 10);
+		count += ft_putnbr(num / 10);
 	count += ft_putchar((nb % 10) + '0');
 	return (count);
 }
@@ -53,7 +53,7 @@ int	ft_puthex(unsigned int nb)
 	int count = 0;
 	char *base = "0123456789abcdef";
         if (nb >= 16)
-                ft_putnbr(nb / 16);
+                ft_puthex(nb / 16);
         count += ft_putchar(base[nb % 16]);
         return (count);
 }
